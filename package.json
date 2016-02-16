@@ -1,0 +1,43 @@
+{
+  "name": "sxsw",
+  "version": "0.0.1",
+  "description": "Plan your time at SXSW strategically",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    
+    "build:libs": "(cat node_modules/moment/min/moment-with-locales.min.js; echo '\n';cat node_modules/av.color/av.color.js; echo '\n';) > zzz-libs-dist.js",
+    
+    
+    "build": "true  && npm run build:libs ",
+    "livereload": "live-reload --port 9091 .",
+    "open": "opener http://localhost:9090",
+    "serve": "http-server -s -p 9090 .",
+    "dev": "npm run build -s && (sleep 1 && npm run open -s) &  npm run livereload -s & npm run serve",
+    "gist": "echo 'Plan your time at SXSW strategically' > '..sxsw' && gistup && gistup-rename 'sxsw - Plan your time at SXSW strategically'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nerik/generator-cartodb.git"
+  },
+  "keywords": [
+    "cartodb"
+  ],
+  "author": "nerik",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nerik/generator-cartodb/issues"
+  },
+  "homepage": "https://github.com/nerik/generator-cartodb#readme",
+  "devDependencies": {
+    
+    "http-server": "^0.8.5",
+    "live-reload": "^1.1.0",
+    "opener": "^1.4.1",
+    "gistup": "^0.1.2",
+    "eslint": "^2.0.0"
+  },
+  "dependencies": {
+    "moment" : "^2.11.2", "av.color" : "^0.0.1"
+  }
+}
