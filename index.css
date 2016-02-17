@@ -4,3 +4,19 @@ html, body, #map {
   padding: 0;
   margin: 0;
 }
+
+.navBar {
+  background: rgba(0,0,0,.7);
+  position: absolute;
+  z-index: 99;
+  left: 70px;
+  top: 20px;
+  padding: 20px;
+  color: #fff;
+  font-family: Helvetica, Arial;
+}
+
+h1 {
+  margin :0;
+  margin-bottom: 10px;
+}
