@@ -19,20 +19,28 @@ var map;
 var buildViz = function (vis, layers) {
   map = vis.getNativeMap();
   venuesSublayer = layers[1].getSubLayer(1);
+  hotelsSublayer = layers[1].getSubLayer(2);
   isoSublayer = layers[1].getSubLayer(0);
   venuesSublayer.setInteractivity('cartodb_id, name')
-  venuesSublayer.on('featureClick', function(e, latlng, pos, data) {
-    cartodb.log.log(data);
-    currentVenueName = data.name;
-    currentVenueLL = latlng;
-    loadIso();
-  });
+  hotelsSublayer.setInteractivity('cartodb_id, name')
+  venuesSublayer.on('featureClick', onFeatureClick);
+  hotelsSublayer.on('featureClick', onFeatureClick);
 
   $('.controls input').on('click', function(e) {
     currentMode = $(e.target).val();
     map.setView(currentVenueLL, (currentMode === 'car') ? 12 : 15)
     loadIso();
   })
+}
+
+var onFeatureClick = function(e, latlng, pos, data, sublayerIndex) {
+  console.log(arguments);
+  // cartodb.log.log(data);
+  // cartodb.log.log(isHotel);
+  currentVenueName = data.name;
+  if (sublayerIndex === 2) currentVenueName = 'hotel:' + currentVenueName;
+  currentVenueLL = latlng;
+  loadIso();
 }
 
 var loadIso = function () {
