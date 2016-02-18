@@ -1,8 +1,22 @@
 var sqlTpl = cartodb._.template('SELECT * FROM nerikcarto.sxsw_iso WHERE name = \'<%= venueName %>\' AND type=\'<%= type %>\' ORDER BY data_range DESC');
 
 var isoCssTpl = cartodb._.template($('#isoCssTpl').html());
-var mycolor = new Color();
-var isoCss = isoCssTpl();
+var gradient = new Color.Gradient([
+  {
+    stop: 0,
+    color: '#B20808'
+  },
+  {
+    stop: 100,
+    color: '#FFB1E9'
+  }
+]);
+var isoCss = isoCssTpl({
+  gradient: gradient,
+  isos: [1800,1200,900,600,300,120]
+});
+
+console.log(isoCss)
 
 function main() {
   cartodb.createVis('map', 'https://team.cartodb.com/u/nerikcarto/api/v2/viz/18658374-d410-11e5-8f87-0e31c9be1b51/viz.json')
