@@ -5,14 +5,16 @@ html, body, #map {
   margin: 0;
 }
 
-.navBar {
-  background: rgba(0,0,0,.7);
-  position: absolute;
+.navBar.cartodb-legend-stack {
+  /*background: rgba(0,0,0,.7);*/
+  /*position: absolute;*/
   z-index: 99;
   left: 70px;
   top: 20px;
+  bottom: auto;
+  right: auto;
   padding: 20px;
-  color: #fff;
+  /*color: #fff;*/
   font-family: Helvetica, Arial;
 }
 

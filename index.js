@@ -1,5 +1,9 @@
 var sqlTpl = cartodb._.template('SELECT * FROM nerikcarto.sxsw_iso WHERE name = \'<%= venueName %>\' AND type=\'<%= type %>\' ORDER BY data_range DESC');
 
+var isoCssTpl = cartodb._.template($('#isoCssTpl').html());
+var mycolor = new Color();
+var isoCss = isoCssTpl();
+
 function main() {
   cartodb.createVis('map', 'https://team.cartodb.com/u/nerikcarto/api/v2/viz/18658374-d410-11e5-8f87-0e31c9be1b51/viz.json')
   .done(buildViz)
@@ -25,6 +29,8 @@ var buildViz = function (vis, layers) {
   hotelsSublayer.setInteractivity('cartodb_id, name')
   venuesSublayer.on('featureClick', onFeatureClick);
   hotelsSublayer.on('featureClick', onFeatureClick);
+
+  isoSublayer.setCartoCSS(isoCss);
 
   $('.controls input').on('click', function(e) {
     currentMode = $(e.target).val();
