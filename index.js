@@ -4,11 +4,15 @@ var isoCssTpl = cartodb._.template($('#isoCssTpl').html());
 var gradient = new Color.Gradient([
   {
     stop: 0,
-    color: '#B20808'
+    color: '#0C2C84'
+  },
+  {
+    stop: 50,
+    color: '#3DB7C6'
   },
   {
     stop: 100,
-    color: '#FFB1E9'
+    color: '#FFFFCC'
   }
 ]);
 var isoCss = isoCssTpl({
