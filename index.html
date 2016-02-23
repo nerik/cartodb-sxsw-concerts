@@ -15,7 +15,6 @@
 
 <body>
   <div id="map">
-
     <div class="navBar cartodb-legend-stack ">
       <h1>Planning SXSW</h1>
       <div class="controls js-controls">
@@ -28,12 +27,32 @@
           <input type="radio" value="car" name="mode"></input>
           car
         </label>
+
+        <div class="days js-days">
+          <button value="15">3/15</button>
+          <button value="16">3/16</button>
+          <button value="17">3/17</button>
+          <button value="18">3/18</button>
+          <button value="19">3/19</button>
+          <button value="20">3/20</button>
+        </div>
       </div>
-
     </div>
-
-
   </div>
+
+  <div class="rightPane">
+    <div class="venue">
+
+      test
+    </div>
+    <!-- <iframe src="https://embed.spotify.com/?uri=spotify%3Auser%3Aqlmhuge%3Aplaylist%3A6Df19VKaShrdWrAnHinwVO" class="spotify" frameborder="0" allowtransparency="true"></iframe> -->
+    <iframe src="https://embed.spotify.com/?uri=spotify:user:nerik8000:playlist:66aoHtz19i7bjV8adw54TJ" class="spotify" frameborder="0" allowtransparency="true"></iframe>
+  </div>
+
+  <script type="text/template" id="venueTpl">
+
+  </script>
+
 
   <script type="text/template" id="isoCssTpl">
 <% for (var i=0; i<6; i++) { %>

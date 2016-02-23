@@ -5,6 +5,25 @@ html, body, #map {
   margin: 0;
 }
 
+#map {
+  width: calc(100% - 400px);
+}
+
+.rightPane {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100%;
+}
+
+.spotify {
+  width: 400px;
+  height: 80px;
+  bottom: 0;
+  position: absolute;
+}
+
 .navBar.cartodb-legend-stack {
   /*background: rgba(0,0,0,.7);*/
   /*position: absolute;*/
@@ -17,6 +36,7 @@ html, body, #map {
   /*color: #fff;*/
   font-family: Helvetica, Arial;
 }
+
 
 h1 {
   margin :0;

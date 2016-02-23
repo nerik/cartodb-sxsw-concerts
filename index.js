@@ -1,4 +1,5 @@
-var sqlTpl = cartodb._.template('SELECT * FROM nerikcarto.sxsw_iso WHERE name = \'<%= venueName %>\' AND type=\'<%= type %>\' ORDER BY data_range DESC');
+var isoSQLTpl = cartodb._.template('SELECT * FROM nerikcarto.sxsw_iso WHERE name = \'<%= venueName %>\' AND type=\'<%= type %>\' ORDER BY data_range DESC');
+var venueSQLTpl = cartodb._.template('SELECT * from nerikcarto.sxsw_events WHERE venue =  \'<%= venueName %>\' AND music is true and film is false and interactive is false AND EXTRACT(\'day\' FROM starttime) = <%= day %>');
 
 var isoCssTpl = cartodb._.template($('#isoCssTpl').html());
 var gradient = new Color.Gradient([
@@ -34,6 +35,7 @@ window.onload = main;
 var currentVenueName = 'Austin Convention Center';
 var currentVenueLL = [30.4541,-97.7825];
 var currentMode = 'walk';
+var currentDay = 15;
 var venuesSublayer;
 var isoSublayer;
 var map;
@@ -50,29 +52,57 @@ var buildViz = function (vis, layers) {
 
   isoSublayer.setCartoCSS(isoCss);
 
-  $('.controls input').on('click', function(e) {
+  $('.js-controls input').on('click', function(e) {
     currentMode = $(e.target).val();
     map.setView(currentVenueLL, (currentMode === 'car') ? 12 : 15)
-    loadIso();
-  })
+    loadIso(currentVenueName, currentMode);
+  });
+
+  $('.js-days button').on('click', function(e) {
+    selectDay(parseInt($(e.target).val()));
+  });
+
+  selectVenue(currentVenueName, currentVenueLL);
 }
 
 var onFeatureClick = function(e, latlng, pos, data, sublayerIndex) {
-  console.log(arguments);
-  // cartodb.log.log(data);
-  // cartodb.log.log(isHotel);
-  currentVenueName = data.name;
-  if (sublayerIndex === 2) currentVenueName = 'hotel:' + currentVenueName;
-  currentVenueLL = latlng;
-  loadIso();
+  selectVenue(data.name, latlng, sublayerIndex === 2);
 }
 
-var loadIso = function () {
-  var sql = sqlTpl({
-    venueName: currentVenueName,
-    type: currentMode
+var selectVenue = function(name, ll, isHotel) {
+  currentVenueLL = ll;
+  currentVenueName = name;
+  if (isHotel) currentVenueName = 'hotel:' + currentVenueName;
+  loadIso(currentVenueName, currentMode);
+  loadVenueEvents(currentVenueName, currentDay);
+}
+
+var selectDay = function(day) {
+  currentDay = day;
+  loadVenueEvents(currentVenueName, currentDay)
+}
+
+var loadIso = function (venueName, mode) {
+  var sql = isoSQLTpl({
+    venueName: venueName,
+    type: mode
+  });
+  isoSublayer.setSQL(sql);
+}
+
+var loadVenueEvents = function (venueName, day) {
+  var sql = venueSQLTpl({
+    venueName: venueName,
+    day: day
   });
   console.log(sql)
-
-  isoSublayer.setSQL(sql);
+  var sqlClient = new cartodb.SQL({ user: 'nerikcarto' });
+  sqlClient.execute(sql)
+    .done(function(data) {
+      console.log(data.rows);
+    })
+    .error(function(errors) {
+      // errors contains a list of errors
+      console.log('errors:' + errors);
+    })
 }
