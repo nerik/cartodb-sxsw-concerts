@@ -17,6 +17,11 @@ html, body, #map {
   height: 100%;
 }
 
+.venueContainer {
+  height: calc(100% - 80px);
+  overflow-y: scroll;
+}
+
 .spotify {
   width: 400px;
   height: 80px;
@@ -41,4 +46,8 @@ html, body, #map {
 h1 {
   margin :0;
   margin-bottom: 10px;
+}
+
+.nearbyVenueTime-title {
+  background-color: #000;
 }

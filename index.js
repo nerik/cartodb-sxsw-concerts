@@ -2,6 +2,7 @@ var isoSQLTpl = cartodb._.template('SELECT * FROM nerikcarto.sxsw_iso WHERE name
 var venueSQLTpl = cartodb._.template('SELECT * from nerikcarto.sxsw_events WHERE venue =  \'<%= venueName %>\' AND music is true and film is false and interactive is false AND EXTRACT(\'day\' FROM starttime) = <%= day %>');
 
 var isoCssTpl = cartodb._.template($('#isoCssTpl').html());
+var venueTpl = cartodb._.template($('#venueTpl').html());
 var gradient = new Color.Gradient([
   {
     stop: 0,
@@ -62,6 +63,12 @@ var buildViz = function (vis, layers) {
     selectDay(parseInt($(e.target).val()));
   });
 
+  $('.js-venueContainer', '.js-nearbyVenue').on('click', function(e) {
+    var venueName = $(e.target).data('venuename');
+    console.log(venuename);
+    selectVenue(venueName);
+  });
+
   selectVenue(currentVenueName, currentVenueLL);
 }
 
@@ -70,7 +77,7 @@ var onFeatureClick = function(e, latlng, pos, data, sublayerIndex) {
 }
 
 var selectVenue = function(name, ll, isHotel) {
-  currentVenueLL = ll;
+  if (ll) currentVenueLL = ll;
   currentVenueName = name;
   if (isHotel) currentVenueName = 'hotel:' + currentVenueName;
   loadIso(currentVenueName, currentMode);
@@ -90,6 +97,33 @@ var loadIso = function (venueName, mode) {
   isoSublayer.setSQL(sql);
 }
 
+var dummyNearbyVenueTimes = [
+  {
+    label: 'less than 2 minutes',
+    color: gradient.get(100).hex,
+    nearbyVenues: [{
+      name: 'Javelina',
+      events: 'Chris and the Tunas, The Doury Brothers (...)'
+    }]
+  },
+  {
+    label: '2 to 5 minutes',
+    color: gradient.get(20).hex,
+    nearbyVenues: [{
+      name: 'Javelina',
+      events: 'Chris and the Tunas, The Doury Brothers (...)'
+    }]
+  },
+  {
+    label: '5 to 10 minutes',
+    color: gradient.get(40).hex,
+    nearbyVenues: [{
+      name: 'Javelina',
+      events: 'Chris and the Tunas, The Doury Brothers (...)'
+    }]
+  }
+];
+
 var loadVenueEvents = function (venueName, day) {
   var sql = venueSQLTpl({
     venueName: venueName,
@@ -100,6 +134,16 @@ var loadVenueEvents = function (venueName, day) {
   sqlClient.execute(sql)
     .done(function(data) {
       console.log(data.rows);
+      var events = data.rows;
+      var html = venueTpl({
+        venue: venueName,
+        date: day,
+        isHotel: false,
+        modeLabel: (currentMode === 'walk') ? 'walking' : 'driving',
+        events: events,
+        nearbyVenuesTimes: dummyNearbyVenueTimes
+      });
+      $('.js-venueContainer').html(html);
     })
     .error(function(errors) {
       // errors contains a list of errors

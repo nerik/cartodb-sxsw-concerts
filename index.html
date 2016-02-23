@@ -21,14 +21,15 @@
 
         <label>
           <input type="radio" value="walk" name="mode" checked></input>
-          walk
+          I'm walking
         </label>
         <label>
           <input type="radio" value="car" name="mode"></input>
-          car
+          I have a car
         </label>
 
         <div class="days js-days">
+          Day :
           <button value="15">3/15</button>
           <button value="16">3/16</button>
           <button value="17">3/17</button>
@@ -41,15 +42,49 @@
   </div>
 
   <div class="rightPane">
-    <div class="venue">
-
-      test
+    <div class="js-venueContainer venueContainer">
     </div>
     <!-- <iframe src="https://embed.spotify.com/?uri=spotify%3Auser%3Aqlmhuge%3Aplaylist%3A6Df19VKaShrdWrAnHinwVO" class="spotify" frameborder="0" allowtransparency="true"></iframe> -->
     <iframe src="https://embed.spotify.com/?uri=spotify:user:nerik8000:playlist:66aoHtz19i7bjV8adw54TJ" class="spotify" frameborder="0" allowtransparency="true"></iframe>
   </div>
 
   <script type="text/template" id="venueTpl">
+    <% if (!isHotel) { %>
+      <em>What's happening at:</em>
+    <% } else { %>
+      <em>From</em>
+    <% } %>
+    <h1><%= venue %> on the <%= date %></h1>
+    <% if (events.length) { %>
+      <ul class="events">
+      <% events.forEach(function(ev) { %>
+        <li><%= ev.name %> - <%= ev.starttime %></li>
+      <% }) %>
+      </ul>
+    <% } %>
+
+    <% if (nearbyVenuesTimes.length) { %>
+      <h2>Not so far away...</h2>
+      <ul class="nearbyVenuesTimes">
+        <% nearbyVenuesTimes.forEach(function(time) { %>
+          <li class="nearbyVenueTime">
+            <div class="nearbyVenueTime-title" style="color: <%= time.color %>">
+              <%= time.label %> <%= modeLabel %>
+            </div>
+            <ul class="nearbyVenuesTimesEvents">
+              <% time.nearbyVenues.forEach(function(nearbyVenue) { %>
+                <li>
+                  <button class="js-nearbyVenue" data-venuename="<%= nearbyVenue.name %>">
+                    <%= nearbyVenue.name %> :
+                    <span class="nearbyVenue-events"><%= nearbyVenue.events %></span>
+                  </button>
+                </li>
+              <% }) %>
+            </ul>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
 
   </script>
 
