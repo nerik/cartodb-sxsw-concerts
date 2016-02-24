@@ -9,15 +9,12 @@ var venueTpl = cartodb._.template($('#venueTpl').html());
 var gradient = new Color.Gradient([
   {
     stop: 0,
-    color: '#0C2C84'
+    color: '#F13C6C'
   },
-  {
-    stop: 50,
-    color: '#3DB7C6'
-  },
+
   {
     stop: 100,
-    color: '#FFFFCC'
+    color: '#00B0D9'
   }
 ]);
 var isoCss = isoCssTpl({
@@ -127,7 +124,7 @@ var dummyNearbyVenueTimes = [
   },
   {
     label: '2 to 5 minutes',
-    color: gradient.get(20).hex,
+    color: gradient.get(70).hex,
     nearbyVenues: [{
       name: 'Javelina',
       events: 'Chris and the Tunas, The Doury Brothers (...)'
@@ -171,7 +168,7 @@ var loadVenueEvents = function (venueName, day) {
       //get 1st available song url
       for (var i = 0; i < data.rows.length; i++) {
         if (data.rows[i].track0_previewurl) {
-          playSong(data.rows[i].track0_previewurl);
+          // playSong(data.rows[i].track0_previewurl);
           break;
         }
       }

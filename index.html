@@ -16,8 +16,16 @@
 <body>
   <div id="map">
     <div class="navBar cartodb-legend-stack ">
-      <h1>Concerts @ SXSW</h1>
-      <p> click on the venues on the map</p>
+      <h1>SXSW concerts selector</h1>
+      <div class="days js-days">
+        Pick a date :
+        <button value="15">3/15</button>
+        <button value="16">3/16</button>
+        <button value="17">3/17</button>
+        <button value="18">3/18</button>
+        <button value="19">3/19</button>
+        <button value="allDays">All days</button>
+      </div>
       <div class="controls js-controls">
 
         <label>
@@ -29,16 +37,9 @@
           I have a car
         </label>
 
-        <div class="days js-days">
-          Day :
-          <button value="15">3/15</button>
-          <button value="16">3/16</button>
-          <button value="17">3/17</button>
-          <button value="18">3/18</button>
-          <button value="19">3/19</button>
-          <button value="allDays">All days</button>
-        </div>
+
       </div>
+      <p>then click on the <span style='color: #1ed760'>venues</span> on the map</p>
     </div>
   </div>
 
@@ -58,15 +59,23 @@
     <h1>
       <%= venue %>
       <% if (!allDays) { %>
-        on the <%= date %>
+        on the <%= date %>th
       <% } %>
     </h1>
     <% if (events.length) { %>
       <ul class="events">
       <% events.forEach(function(ev) { %>
-        <li>
-          <img class="js-playsong artist-cover" src="<%= ev.imageurl %>" data-songurl="<%= ev.track0_previewurl %>" />
+        <li class="event">
+          <div class="event-cover">
+            <% if (ev.imageurl) { %>
+              <img class="js-playsong event-cover-image" src="<%= ev.imageurl %>" data-songurl="<%= ev.track0_previewurl %>" />
+            <% } %>
+          </div>
           <%= ev.name %> - <%= ev.starttime %>
+
+          <% if (ev.spotifyurl) { %>
+            <a target="_blank" class="event-spotify" href="<%= ev.spotifyurl %>">Open in <img src="spotify.png"></a>
+          <% } %>
         </li>
       <% }) %>
       </ul>
@@ -107,13 +116,13 @@
 
 #sxsw_iso{
   polygon-fill: #FFFFCC;
-  polygon-opacity: 0.1;
+  polygon-opacity: .03;
   line-color: #FFF;
-  line-width: 2;
+  line-width: 1;
   line-opacity: 1;
-  text-name: [data_range]/60 + ' minutes';
+  text-name: [data_range]/60 + 'm. ' + [type];
   text-face-name: 'DejaVu Sans Bold';
-  text-size: 13;
+  text-size: 12;
   text-label-position-tolerance: 10;
   text-halo-fill: #FFF;
   text-halo-radius: 1;

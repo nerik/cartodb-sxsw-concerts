@@ -18,16 +18,16 @@ html, body, #map {
 }
 
 .venueContainer {
-  height: calc(100% - 80px);
+  height: 100%;
   overflow-y: scroll;
 }
-
+/*
 .spotify {
   width: 400px;
   height: 80px;
   bottom: 0;
   position: absolute;
-}
+}*/
 
 .navBar.cartodb-legend-stack {
   /*background: rgba(0,0,0,.7);*/
@@ -52,6 +52,15 @@ h1 {
   background-color: #000;
 }
 
-.artist-cover {
+.event-cover-image {
   width: 100px;
+  cursor: pointer;
+}
+.event-cover-image:hover {
+  border: 1px solid blue;
+}
+
+
+.event-spotify img {
+  width: 16px;
 }

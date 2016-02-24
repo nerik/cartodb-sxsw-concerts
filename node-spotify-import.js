@@ -10,7 +10,7 @@ var file = path.join(__dirname, 'node-spotify-getArtists.json')
 
 importer
   .file(file, {
-    privacy: 'public'
+    // privacy: 'public'
   })
   .done(function(table_name) {
     console.log('Table ' + table_name + ' has been created!');
