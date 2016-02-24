@@ -1,8 +1,11 @@
 var isoSQLTpl = cartodb._.template('SELECT * FROM nerikcarto.sxsw_iso WHERE name = \'<%= venueName %>\' AND type=\'<%= type %>\' ORDER BY data_range DESC');
-var venueSQLTpl = cartodb._.template('SELECT * from nerikcarto.sxsw_events WHERE venue =  \'<%= venueName %>\' AND music is true and film is false and interactive is false AND EXTRACT(\'day\' FROM starttime) = <%= day %>');
+var venueSQLTpl = cartodb._.template($('#venueSQLTpl').html());
+var dayVenuesSQLTpl = cartodb._.template($('#dayVenuesSQLTpl').html());
 
 var isoCssTpl = cartodb._.template($('#isoCssTpl').html());
 var venueTpl = cartodb._.template($('#venueTpl').html());
+
+
 var gradient = new Color.Gradient([
   {
     stop: 0,
@@ -22,7 +25,7 @@ var isoCss = isoCssTpl({
   isos: [1800,1200,900,600,300,120]
 });
 
-console.log(isoCss)
+var audio = null;
 
 function main() {
   cartodb.createVis('map', 'https://team.cartodb.com/u/nerikcarto/api/v2/viz/18658374-d410-11e5-8f87-0e31c9be1b51/viz.json')
@@ -36,7 +39,7 @@ window.onload = main;
 var currentVenueName = 'Austin Convention Center';
 var currentVenueLL = [30.4541,-97.7825];
 var currentMode = 'walk';
-var currentDay = 15;
+var currentDay = 'allDays';
 var venuesSublayer;
 var isoSublayer;
 var map;
@@ -69,6 +72,17 @@ var buildViz = function (vis, layers) {
     selectVenue(venueName);
   });
 
+  $('.js-venueContainer').on('click', function (e) {
+    console.log('pouet')
+    console.log(e.target);
+    var $t = $(e.target)
+    if (e.target.className === 'js-playsong') {
+      var songURL = $t.data('songurl');
+      playSong(songURL);
+      console.log(songURL)
+    }
+  })
+
   selectVenue(currentVenueName, currentVenueLL);
 }
 
@@ -86,15 +100,25 @@ var selectVenue = function(name, ll, isHotel) {
 
 var selectDay = function(day) {
   currentDay = day;
-  loadVenueEvents(currentVenueName, currentDay)
+  loadVenueEvents(currentVenueName, currentDay);
+  loadDayVenues(currentDay);
 }
 
 var loadIso = function (venueName, mode) {
   var sql = isoSQLTpl({
-    venueName: venueName,
+    venueName: venueName.replace('\'','\'\''),
     type: mode
   });
   isoSublayer.setSQL(sql);
+}
+
+var loadDayVenues = function (day) {
+  var sql = dayVenuesSQLTpl({
+    day: day,
+    allDays: day === 'allDays'
+  });
+  console.log(sql)
+  venuesSublayer.setSQL(sql)
 }
 
 var dummyNearbyVenueTimes = [
@@ -126,27 +150,48 @@ var dummyNearbyVenueTimes = [
 
 var loadVenueEvents = function (venueName, day) {
   var sql = venueSQLTpl({
-    venueName: venueName,
-    day: day
+    venueName: venueName.replace('\'','\'\''),
+    day: day,
+    allDays: day === 'allDays'
   });
+
   console.log(sql)
   var sqlClient = new cartodb.SQL({ user: 'nerikcarto' });
   sqlClient.execute(sql)
     .done(function(data) {
       console.log(data.rows);
+
       var events = data.rows;
       var html = venueTpl({
         venue: venueName,
         date: day,
+        allDays: day === 'allDays',
         isHotel: false,
         modeLabel: (currentMode === 'walk') ? 'walking' : 'driving',
         events: events,
         nearbyVenuesTimes: dummyNearbyVenueTimes
       });
       $('.js-venueContainer').html(html);
+
+      //get 1st available song url
+      for (var i = 0; i < data.rows.length; i++) {
+        if (data.rows[i].track0_previewurl) {
+          playSong(data.rows[i].track0_previewurl);
+          break;
+        }
+      }
+
     })
     .error(function(errors) {
       // errors contains a list of errors
       console.log('errors:' + errors);
     })
+}
+
+var playSong = function(url) {
+  if (audio) {
+      audio.pause();
+  }
+  audio = new Audio(url);
+  audio.play();
 }

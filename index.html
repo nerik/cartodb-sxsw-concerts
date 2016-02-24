@@ -16,7 +16,8 @@
 <body>
   <div id="map">
     <div class="navBar cartodb-legend-stack ">
-      <h1>Planning SXSW</h1>
+      <h1>Concerts @ SXSW</h1>
+      <p> click on the venues on the map</p>
       <div class="controls js-controls">
 
         <label>
@@ -35,7 +36,7 @@
           <button value="17">3/17</button>
           <button value="18">3/18</button>
           <button value="19">3/19</button>
-          <button value="20">3/20</button>
+          <button value="allDays">All days</button>
         </div>
       </div>
     </div>
@@ -45,7 +46,7 @@
     <div class="js-venueContainer venueContainer">
     </div>
     <!-- <iframe src="https://embed.spotify.com/?uri=spotify%3Auser%3Aqlmhuge%3Aplaylist%3A6Df19VKaShrdWrAnHinwVO" class="spotify" frameborder="0" allowtransparency="true"></iframe> -->
-    <iframe src="https://embed.spotify.com/?uri=spotify:user:nerik8000:playlist:66aoHtz19i7bjV8adw54TJ" class="spotify" frameborder="0" allowtransparency="true"></iframe>
+    <!-- <iframe src="https://embed.spotify.com/?uri=spotify:user:nerik8000:playlist:66aoHtz19i7bjV8adw54TJ" class="spotify" frameborder="0" allowtransparency="true"></iframe> -->
   </div>
 
   <script type="text/template" id="venueTpl">
@@ -54,13 +55,23 @@
     <% } else { %>
       <em>From</em>
     <% } %>
-    <h1><%= venue %> on the <%= date %></h1>
+    <h1>
+      <%= venue %>
+      <% if (!allDays) { %>
+        on the <%= date %>
+      <% } %>
+    </h1>
     <% if (events.length) { %>
       <ul class="events">
       <% events.forEach(function(ev) { %>
-        <li><%= ev.name %> - <%= ev.starttime %></li>
+        <li>
+          <img class="js-playsong" src="<%= ev.imageurl %>" data-songurl="<%= ev.track0_previewurl %>" />
+          <%= ev.name %> - <%= ev.starttime %>
+        </li>
       <% }) %>
       </ul>
+    <% } else { %>
+      Nothing tonight !
     <% } %>
 
     <% if (nearbyVenuesTimes.length) { %>
@@ -118,6 +129,51 @@
     text-fill: @col<%= j %>;
   }
 <% } %>
+
+  </script>
+
+  <script type="text/template" id="venueSQLTpl">
+    SELECT
+    e.name,
+    e.starttime,
+    e.time,
+    e.type,
+    a.spotifyURL,
+    a.imageURL,
+    a.track0_previewURL
+    from nerikcarto.sxsw_events e, nerikcarto.sxsw_artists a
+    WHERE
+    a.name = e.name
+    AND
+    venue =  '<%= venueName %>' AND music is true and film is false and interactive is false
+    <% if (!allDays) { %>
+      AND EXTRACT('day' FROM starttime) = <%= day %>
+    <% } %>
+  </script>
+
+
+  <script type="text/template" id="dayVenuesSQLTpl">
+    WITH events AS (
+      SELECT
+    	venue,
+    	sum(music::int) music,
+    	sum(interactive::int) interactive,
+    	sum(film::int) film,
+      string_agg(name, ', ') events_summary
+    	FROM nerikcarto.sxsw_events
+      <% if (!allDays) { %>
+      	WHERE
+      		EXTRACT('day' FROM starttime) = <%= day %>
+      <% } %>
+      GROUP BY venue
+    )
+
+    SELECT *
+    FROM nerikcarto.sxsw_venues, events
+    WHERE events.venue = nerikcarto.sxsw_venues.name
+    AND music > 0
+    and film = 0 and interactive = 0
+
 
   </script>
 

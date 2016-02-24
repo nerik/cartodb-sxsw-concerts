@@ -1,3 +1,4 @@
 node_modules/
 *.log
+node-secret.js
 .DS_Store

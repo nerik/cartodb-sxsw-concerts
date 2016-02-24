@@ -5,10 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    
     "build:libs": "(cat node_modules/moment/min/moment-with-locales.min.js; echo '\n';cat node_modules/av.color/av.color.js; echo '\n';) > zzz-libs-dist.js",
-    
-    
     "build": "true  && npm run build:libs ",
     "livereload": "live-reload --port 9091 .",
     "open": "opener http://localhost:9090",
@@ -30,7 +27,6 @@
   },
   "homepage": "https://github.com/nerik/generator-cartodb#readme",
   "devDependencies": {
-    
     "http-server": "^0.8.5",
     "live-reload": "^1.1.0",
     "opener": "^1.4.1",
@@ -38,6 +34,9 @@
     "eslint": "^2.0.0"
   },
   "dependencies": {
-    "moment" : "^2.11.2", "av.color" : "^0.0.1"
+    "av.color": "^0.0.1",
+    "moment": "^2.11.2",
+    "request": "^2.69.0",
+    "underscore": "^1.8.3"
   }
 }
