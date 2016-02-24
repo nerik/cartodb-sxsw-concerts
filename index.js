@@ -36,7 +36,7 @@ function main() {
 }
 window.onload = main;
 
-var currentVenueName = 'Austin Convention Center';
+var currentVenueName = 'Swan Dive Patio';
 var currentVenueLL = [30.4541,-97.7825];
 var currentMode = 'walk';
 var currentDay = 'allDays';
@@ -58,7 +58,7 @@ var buildViz = function (vis, layers) {
 
   $('.js-controls input').on('click', function(e) {
     currentMode = $(e.target).val();
-    map.setView(currentVenueLL, (currentMode === 'car') ? 12 : 15)
+    map.setView(currentVenueLL, (currentMode === 'car') ? 12 : 15);
     loadIso(currentVenueName, currentMode);
   });
 
@@ -66,20 +66,15 @@ var buildViz = function (vis, layers) {
     selectDay(parseInt($(e.target).val()));
   });
 
-  $('.js-venueContainer', '.js-nearbyVenue').on('click', function(e) {
-    var venueName = $(e.target).data('venuename');
-    console.log(venuename);
-    selectVenue(venueName);
-  });
-
   $('.js-venueContainer').on('click', function (e) {
-    console.log('pouet')
-    console.log(e.target);
     var $t = $(e.target)
-    if (e.target.className === 'js-playsong') {
+    console.log(e.target.className)
+    if ($t.hasClass('js-playsong')) {
       var songURL = $t.data('songurl');
       playSong(songURL);
-      console.log(songURL)
+    } else if ($t.hasClass('js-nearbyVenue') || $t.parent('.js-nearbyVenue').length) {
+      var nearbyVenueName = $t.data('venuename') || $t.parent('.js-nearbyVenue').data('venuename');
+      selectVenue(nearbyVenueName);
     }
   })
 

@@ -65,7 +65,7 @@
       <ul class="events">
       <% events.forEach(function(ev) { %>
         <li>
-          <img class="js-playsong" src="<%= ev.imageurl %>" data-songurl="<%= ev.track0_previewurl %>" />
+          <img class="js-playsong artist-cover" src="<%= ev.imageurl %>" data-songurl="<%= ev.track0_previewurl %>" />
           <%= ev.name %> - <%= ev.starttime %>
         </li>
       <% }) %>

@@ -51,3 +51,7 @@ h1 {
 .nearbyVenueTime-title {
   background-color: #000;
 }
+
+.artist-cover {
+  width: 100px;
+}
