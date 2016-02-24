@@ -168,7 +168,7 @@ var loadVenueEvents = function (venueName, day) {
       //get 1st available song url
       for (var i = 0; i < data.rows.length; i++) {
         if (data.rows[i].track0_previewurl) {
-          // playSong(data.rows[i].track0_previewurl);
+          playSong(data.rows[i].track0_previewurl);
           break;
         }
       }
