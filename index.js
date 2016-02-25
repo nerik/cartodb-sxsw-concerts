@@ -26,7 +26,9 @@ var isoCss = isoCssTpl({
 var audio = null;
 
 function main() {
-  cartodb.createVis('map', 'https://team.cartodb.com/u/nerikcarto/api/v2/viz/18658374-d410-11e5-8f87-0e31c9be1b51/viz.json')
+  cartodb.createVis('map', 'https://team.cartodb.com/u/nerikcarto/api/v2/viz/18658374-d410-11e5-8f87-0e31c9be1b51/viz.json', {
+    infowindow: true
+  })
   .done(buildViz)
   .error(function(err) {
     console.log(err);
@@ -37,21 +39,23 @@ window.onload = main;
 var currentVenueName = 'BD Riley\'s';
 var currentVenueLL = [30.4541,-97.7825];
 var currentMode = 'walk';
-var currentDay = 15;
+var currentDay = 16;
 var venuesSublayer;
 var isoSublayer;
 var map;
 
 var buildViz = function (vis, layers) {
   map = vis.getNativeMap();
-  console.log(layers[1].getSubLayers())
+
   isoSublayer = layers[1].getSubLayer(0);
   venuesSublayer = layers[1].getSubLayer(2);
   hotelsSublayer = layers[1].getSubLayer(1);
-  venuesSublayer.setInteractivity('cartodb_id, name')
-  hotelsSublayer.setInteractivity('cartodb_id, name')
+  // venuesSublayer.setInteractivity('cartodb_id, name')
+  // hotelsSublayer.setInteractivity('cartodb_id, name')
   venuesSublayer.on('featureClick', onFeatureClick);
   hotelsSublayer.on('featureClick', onFeatureClick);
+
+
 
   isoSublayer.setCartoCSS(isoCss);
 
@@ -84,6 +88,7 @@ var buildViz = function (vis, layers) {
     }
   })
 
+  selectDay(currentDay)
   selectVenue(currentVenueName, currentVenueLL);
 }
 
@@ -96,7 +101,7 @@ var selectVenue = function(name, ll, isHotel) {
   currentVenueName = name;
   if (isHotel) currentVenueName = 'hotel:' + currentVenueName;
   loadIso(currentVenueName, currentMode);
-  loadVenueEvents(currentVenueName, currentDay);
+  loadVenueEvents(currentVenueName, currentDay, isHotel);
 }
 
 var selectDay = function(day) {
@@ -154,7 +159,7 @@ var dummyNearbyVenueTimes = [
   }
 ];
 
-var loadVenueEvents = function (venueName, day) {
+var loadVenueEvents = function (venueName, day, isHotel) {
   var sql = venueSQLTpl({
     venueName: venueName.replace('\'','\'\''),
     day: day,
@@ -165,12 +170,18 @@ var loadVenueEvents = function (venueName, day) {
   var sqlClient = new cartodb.SQL({ user: 'nerikcarto' });
   sqlClient.execute(sql)
     .done(function(data) {
-      var events = data.rows;
+      var events = _.sortBy(data.rows, function(ev) {
+        if (!ev.time) return 0;
+        var m = moment(ev.time.split(' - ')[0], 'h:mmA');
+        if (m.hour() >= 0 && m.hour() <12) m.add(1, 'day');
+        return(m.unix())
+      });
       var html = venueTpl({
+        venue: venueName,
         venue: venueName,
         date: day,
         allDays: day === 'allDays',
-        isHotel: false,
+        isHotel: isHotel,
         events: events
       });
       $('.js-venueContainer').html(html);
@@ -194,6 +205,8 @@ var loadVenueEvents = function (venueName, day) {
   var nearbyVenuesHtml = nearbyVenuesTpl({
     nearbyVenuesTimes: dummyNearbyVenueTimes,
     modeLabel: (currentMode === 'walk') ? 'walking' : 'driving',
+    isHotel: isHotel,
+
   })
   $('.js-nearbyVenuesContainer').html(nearbyVenuesHtml);
 

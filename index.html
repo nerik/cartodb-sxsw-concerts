@@ -20,7 +20,7 @@
       <h1><span class="navBar-sxsw">SXSW</span> concerts selector</h1>
       <div class="days js-days navBar-section">
         Pick a date:
-        <button value="15" class="selected">3/15</button><button value="16">3/16</button><button value="17">3/17</button><button value="18">3/18</button><button value="19">3/19</button><button value="allDays">All days</button>
+        <button value="15">3/15</button><button value="16" class="selected">3/16</button><button value="17">3/17</button><button value="18">3/18</button><button value="19">3/19</button><button value="allDays">All days</button>
       </div>
       <div class="controls js-controls navBar-section">
         Choose a mode:
@@ -52,9 +52,9 @@
 
   <script type="text/template" id="venueTpl">
     <% if (!isHotel) { %>
-      <em>What's happening at:</em>
+      <div class="venue-intro">What's happening at:</div>
     <% } else { %>
-      <em>From</em>
+      <div class="venue-intro">From</div>
     <% } %>
     <h1>
       <%= venue %>
@@ -62,42 +62,40 @@
         on the <%= date %>th
       <% } %>
     </h1>
-    <% if (events.length) { %>
-      <ul class="events">
-      <% events.forEach(function(ev) { %>
-        <li class="event js-event" data-eventid="<%= ev.cartodb_id %>">
-          <div class="event-cover js-playsong" data-track0_previewurl="<%= ev.track0_previewurl %>" data-track1_previewurl="<%= ev.track1_previewurl %>" data-track2_previewurl="<%= ev.track2_previewurl %>">
-            <% if (ev.imageurl) { %>
-              <img class="event-cover-image" src="<%= ev.imageurl %>" />
-            <% } %>
-          </div>
-          <div class="event-section event-section-title">
-            <%= ev.name %>
-          </div>
-          <div class="event-section">
-          <%= ev.starttime %>
-          <br>
-          <%= moment.utc(ev.starttime).add(1, 'hours').format('LT') %>
-          <br>
-          <%= ev.time %>
-          </div>
-          <% if (ev.spotifyurl) { %>
-            <div class="event-section">
-              <a target="_blank" class="event-spotify" href="<%= ev.spotifyurl %>">Open in <img src="spotify.png"></a>
+    <% if (!isHotel) { %>
+      <% if (events.length) { %>
+        <ul class="events">
+        <% events.forEach(function(ev) { %>
+          <li class="event js-event" data-eventid="<%= ev.cartodb_id %>">
+            <div class="event-cover js-playsong<%if (ev.track0_previewurl) {%> event-cover--hasPreview<%}%>" data-track0_previewurl="<%= ev.track0_previewurl %>" data-track1_previewurl="<%= ev.track1_previewurl %>" data-track2_previewurl="<%= ev.track2_previewurl %>" style="background-image:url(<%= ev.imageurl %>)">
+
             </div>
-          <% } %>
-        </li>
-      <% }) %>
-      </ul>
-    <% } else { %>
-      Nothing tonight !
+            <div class="event-section event-section-title">
+              <%= ev.name %>
+            </div>
+            <div class="event-section">
+            <%= ev.time %>
+            </div>
+            <% if (ev.spotifyurl) { %>
+              <div class="event-section">
+                <a target="_blank" class="event-spotify" href="<%= ev.spotifyurl %>">Open in <img src="spotify.png"></a>
+              </div>
+            <% } %>
+          </li>
+        <% }) %>
+        </ul>
+      <% } else { %>
+        Nothing tonight !
+      <% } %>
     <% } %>
   </script>
 
 
   <script type="text/template" id="nearbyVenuesTpl">
     <% if (nearbyVenuesTimes.length) { %>
-      <h2>Not so far away...</h2>
+      <% if (!isHotel) { %>
+        <h2>Not so far away...</h2>
+      <% } %>
       <ul class="nearbyVenuesTimes">
         <% nearbyVenuesTimes.forEach(function(time) { %>
           <li class="nearbyVenueTime">
@@ -158,25 +156,24 @@
     SELECT
     e.cartodb_id,
     e.name,
-    e.starttime,
     e.time,
+    e.day,
     e.type,
     a.spotifyURL,
     a.imageURL,
     a.track0_previewURL,
     a.track1_previewURL,
     a.track2_previewURL
-    from nerikcarto.sxsw_events e, nerikcarto.sxsw_artists a
-    WHERE
+    from nerikcarto.sxsw_events2 e
+    LEFT JOIN nerikcarto.sxsw_artists a
+    ON
     a.name = e.name
-    AND
+    WHERE
     venue =  '<%= venueName %>' AND music is true and film is false and interactive is false
     <% if (!allDays) { %>
-      AND EXTRACT('day' FROM starttime) = <%= day %>
+      AND day = <%= day %>
     <% } %>
-    ORDER BY
-    e.time
-    ASC
+
   </script>
 
 
@@ -188,10 +185,10 @@
     	sum(interactive::int) interactive,
     	sum(film::int) film,
       string_agg(name, ', ') events_summary
-    	FROM nerikcarto.sxsw_events
+    	FROM nerikcarto.sxsw_events2
       <% if (!allDays) { %>
       	WHERE
-      		EXTRACT('day' FROM starttime) = <%= day %>
+      		day = <%= day %>
       <% } %>
       GROUP BY venue
     )

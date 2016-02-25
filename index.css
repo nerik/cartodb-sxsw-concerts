@@ -102,6 +102,15 @@ button {
   padding-left: 0;
 }
 
+.venueContainer h1 {
+  margin-top: 0;
+}
+
+.venue-intro {
+  font-style: italic;
+  text-transform: uppercase;
+}
+
 .venueContainer .event, .venueContainer h2 {
   clear: both;
 }
@@ -124,13 +133,11 @@ button {
   margin-bottom: 8px;
   vertical-align: middle;
   position: relative;
+  background-size: cover;
+  border: 1px solid rgba(256,256,256,.4);
 }
 
-.event-cover-image {
-  width: 100%;
-}
-
-.event-cover:hover::after, .event-cover.selected::after {
+.event-cover.event-cover--hasPreview:hover::after, .event-cover.event-cover--hasPreview.selected::after {
   content: "►";
   color: #1ed760;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, .4);
