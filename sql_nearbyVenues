@@ -1,0 +1,43 @@
+WITH vh AS (
+  SELECT
+  	cartodb_id,
+  	name,
+  	false as hotel
+  FROM
+  	nerikcarto.sxsw_venues
+  UNION ALL
+  SELECT
+  	cartodb_id,
+  	'hotel:'||name,
+  	true as hotel
+  FROM
+  	nerikcarto.sxsw_hotels
+)
+
+SELECT
+vh.cartodb_id as center_id,
+nearby.cartodb_id as nearby_id,
+'walk' as mode,
+
+(
+  SELECT
+  data_range
+  FROM nerikcarto.sxsw_iso
+  WHERE
+  name = vh.name
+  AND
+  type = 'walk'
+  AND
+  ST_Contains(
+      the_geom,
+      (SELECT the_geom FROM nerikcarto.sxsw_venues WHERE name = nearby.name)
+  )
+  ORDER BY
+  data_range
+  LIMIT 1
+)
+FROM vh
+CROSS JOIN
+nerikcarto.sxsw_venues nearby
+WHERE
+vh.cartodb_id <> nearby.cartodb_id

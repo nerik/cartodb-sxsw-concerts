@@ -198,6 +198,45 @@
     WHERE events.venue = nerikcarto.sxsw_venues.name
     AND music > 0
     and film = 0 and interactive = 0
+  </script>
+
+  <script type="text/template" id="nearbyVenuesSQLTpl">
+    WITH events AS (
+      SELECT
+      venue_id,
+      string_agg(name, ', ') events_summary
+      FROM nerikcarto.sxsw_events2
+      <% if (!allDays) { %>
+      	WHERE
+      		day = <%= day %>
+      <% } %>
+      GROUP BY venue_id
+    ), nearby AS (
+      SELECT
+      data_range,
+      nearby_id
+      FROM nerikcarto.sxsw_nearby_venues_<%= mode %>
+      WHERE
+      center_id = <%= center_id %>
+    )
+
+    SELECT
+    nearby.data_range,
+    nerikcarto.sxsw_venues.name,
+    events.events_summary
+    from
+    events, nearby, nerikcarto.sxsw_venues
+    WHERE
+    events.venue_id = nearby.nearby_id
+    AND
+    nerikcarto.sxsw_venues.cartodb_id = nearby.nearby_id
+    ORDER BY
+    nearby.data_range
+    LIMIT 15
+
+
+
+
 
 
   </script>
