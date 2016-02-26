@@ -217,7 +217,7 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
         .first()
         .value();
 
-      // if (eventWithSong) playSong(eventWithSong, eventWithSong.cartodb_id);
+      if (eventWithSong) playSong(eventWithSong, eventWithSong.cartodb_id);
 
     })
     .error(function(errors) {
