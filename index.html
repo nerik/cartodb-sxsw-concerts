@@ -25,18 +25,18 @@
     <div class="days js-days topBar-section">
       <div class="topBar-step">1.</div>
       pick a date:<br>
-      <button value="15">3/15</button><button value="16" class="selected">3/16</button><button value="17">3/17</button><button value="18">3/18</button><button value="19">3/19</button><button value="allDays">All days</button>
+      <button value="15">15th</button><button value="16" class="selected">16th</button><button value="17">17th</button><button value="18">18th</button><button value="19">19th</button><button value="allDays">all</button>
     </div>
     <div class="controls js-controls topBar-section">
       <div class="topBar-step">2.</div>
       choose a mode:<br>
       <label>
         <input type="radio" value="walk" name="mode" checked></input>
-        I'm walking
+        walking
       </label>
       <label>
         <input type="radio" value="car" name="mode"></input>
-        I have a car
+        by car
       </label>
 
     </div>
@@ -44,7 +44,14 @@
       <div class="topBar-step">3.</div>
       click on the <span class='green venues-legend'></span>venues<br> on the map
     </div>
+    <div class="topBar-section">
+      <div class="topBar-step">4.</div>
+        click on artists covers<br>
+        to play a sample
+    </div>
   </div>
+
+</div>
   <div class="main">
 
     <div id="map">
@@ -107,6 +114,9 @@
             </div>
             <div class="event-section">
             <%= ev.time %>
+            <% if (allDays) { %>
+               - 3/<%= ev.day %>
+            <% } %>
             </div>
             <% if (ev.spotifyurl) { %>
               <div class="event-section">
@@ -164,15 +174,15 @@
   polygon-fill: #FFFFCC;
   polygon-opacity: .03;
   line-color: #FFF;
-  line-width: 1;
+  line-width: 1.5;
   line-opacity: 1;
   text-name: [data_range]/60 + 'm. ' + [type];
   text-face-name: 'DejaVu Sans Bold';
-  text-size: 12;
+  text-size: 13;
   text-label-position-tolerance: 10;
-  text-halo-fill: #FFF;
-  text-halo-radius: 1;
-  text-allow-overlap: true;
+  text-halo-fill: #000;
+  text-halo-radius: 2;
+  text-allow-overlap: false;
   text-placement: line;
   text-placement-type: simple;
   text-dy: -10;

@@ -81,9 +81,9 @@ var buildViz = function (vis, layers) {
   });
 
   $('.js-days button').on('click', function(e) {
-    var rawValue = $(e.target).val();
-    if (rawValue !== 'allDays') rawValue = parseInt(rawValue);
-    selectDay(rawValue);
+    var d = $(e.target).val();
+    if (d !== 'allDays') d = parseInt(d);
+    selectDay(d);
   });
 
   $('.js-venueContainer').on('click', function (e) {
@@ -105,7 +105,7 @@ var buildViz = function (vis, layers) {
     }
   })
 
-  selectDay(currentDay)
+  selectDay(currentDay, true)
   selectVenue(currentVenue.name, currentVenue.ll, false, currentVenue.id, true);
 }
 
@@ -130,14 +130,15 @@ var selectVenue = function(name, ll, isHotel, id, dontLoadEvents) {
   $('.js-venueContainer').html('');
 
   loadIso(currentVenue.name, currentMode);
+
   if (!dontLoadEvents) loadVenueEvents(currentVenue.name, currentDay, isHotel, currentVenue.id);
 }
 
-var selectDay = function(day) {
+var selectDay = function(day, preventSongAutoplay) {
   currentDay = day;
   $('.js-days button').removeClass('selected');
   $('.js-days button[value='+day+']').addClass('selected');
-  loadVenueEvents(currentVenue.name, currentDay, currentVenue.isHotel, currentVenue.id);
+  loadVenueEvents(currentVenue.name, currentDay, currentVenue.isHotel, currentVenue.id, preventSongAutoplay);
   loadDayVenues(currentDay);
 }
 
@@ -160,8 +161,8 @@ var loadDayVenues = function (day) {
 }
 
 
-var loadVenueEvents = function (venueName, day, isHotel, venueId) {
-  console.log(day)
+var loadVenueEvents = function (venueName, day, isHotel, venueId, preventSongAutoplay) {
+  console.log(preventSongAutoplay)
   var allDays = day === 'allDays';
   var sql = venueSQLTpl({
     venueName: venueName.replace('\'','\'\''),
@@ -173,23 +174,27 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
   var sqlClient = new cartodb.SQL({ user: 'nerikcarto' });
   sqlClient.execute(sql)
     .done(function(data) {
+
       var events = _.sortBy(data.rows, function(ev) {
         if (!ev.time) return 0;
         var m = moment(ev.time.split(' - ')[0], 'h:mmA');
         if (m.hour() >= 0 && m.hour() <12) m.add(1, 'day');
         return(m.unix())
       });
+
+      // console.log(events)
+        console.log(venueName)
       var html = venueTpl({
-        venue: venueName,
-        venue: venueName,
+        venue: venueName.replace('hotel:', 'Hotel: '),
         date: day,
-        allDays: allDays,
+        allDays: day === 'allDays',
         isHotel: isHotel,
         events: events
       });
       $('.js-venueContainer').html(html);
 
-      var eventWithSong = _.chain(data.rows)
+      if (!preventSongAutoplay) {
+        var eventWithSong = _.chain(data.rows)
         .filter(function(ev) {
           return ev.track0_previewurl;
         })
@@ -197,14 +202,15 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
         .first()
         .value();
 
-      if (eventWithSong) playSong(eventWithSong, eventWithSong.cartodb_id);
+        if (eventWithSong) playSong(eventWithSong, eventWithSong.cartodb_id);
+      }
 
     })
     .error(function(errors) {
       // errors contains a list of errors
       console.log('errors:' + errors);
     });
-    console.log(allDays)
+
   var nearbySQL = nearbyVenuesSQLTpl({
     center_id: venueId,
     day: day,
@@ -215,7 +221,7 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
   console.log(nearbySQL)
   sqlClient.execute(nearbySQL)
     .done(function(data) {
-      console.log(data);
+      // console.log(data);
       var nearbyVenuesTimes = [];
 
       function getRangeLabel(range) {
