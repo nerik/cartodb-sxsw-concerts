@@ -81,7 +81,9 @@ var buildViz = function (vis, layers) {
   });
 
   $('.js-days button').on('click', function(e) {
-    selectDay(parseInt($(e.target).val()));
+    var rawValue = $(e.target).val();
+    if (rawValue !== 'allDays') rawValue = parseInt(rawValue);
+    selectDay(rawValue);
   });
 
   $('.js-venueContainer').on('click', function (e) {
@@ -159,7 +161,7 @@ var loadDayVenues = function (day) {
 
 
 var loadVenueEvents = function (venueName, day, isHotel, venueId) {
-  console.log(venueId)
+  console.log(day)
   var allDays = day === 'allDays';
   var sql = venueSQLTpl({
     venueName: venueName.replace('\'','\'\''),
@@ -181,7 +183,7 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
         venue: venueName,
         venue: venueName,
         date: day,
-        allDays: day === 'allDays',
+        allDays: allDays,
         isHotel: isHotel,
         events: events
       });
@@ -202,7 +204,7 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
       // errors contains a list of errors
       console.log('errors:' + errors);
     });
-
+    console.log(allDays)
   var nearbySQL = nearbyVenuesSQLTpl({
     center_id: venueId,
     day: day,
@@ -210,7 +212,7 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
     mode: currentMode,
     isHotel: isHotel
   });
-  // console.log(nearbySQL)
+  console.log(nearbySQL)
   sqlClient.execute(nearbySQL)
     .done(function(data) {
       console.log(data);
