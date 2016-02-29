@@ -18,7 +18,7 @@ SELECT
 vh.cartodb_id as center_id,
 nearby.cartodb_id as nearby_id,
 'walk' as mode,
-
+vh.hotel as center_isHotel,
 (
   SELECT
   data_range

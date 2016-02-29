@@ -35,13 +35,13 @@ var audio = null;
 
 
 var currentVenue = {
-  name: 'BD Riley\'s',
-  ll: [30.4541,-97.7825],
-  id: 85,
+  name: 'Javelina',
+  ll: [30.2664346,-97.7397135],
+  id: 99,
   isHotel: false
 }
 var currentMode = 'walk';
-var currentDay = 16;
+var currentDay = 17;
 var venuesSublayer;
 var isoSublayer;
 var map;
@@ -69,13 +69,13 @@ var buildViz = function (vis, layers) {
   venuesSublayer.on('featureClick', onFeatureClick);
   hotelsSublayer.on('featureClick', onFeatureClick);
 
-
-
   isoSublayer.setCartoCSS(isoCss);
 
   $('.js-controls input').on('click', function(e) {
     currentMode = $(e.target).val();
-    map.setView(currentVenue.ll, (currentMode === 'car') ? 12 : 15);
+    if (currentMode == 'car') {
+      map.setView(currentVenue.ll, 12);
+    }
     loadIso(currentVenue.name, currentMode);
     selectVenue(currentVenue.name, currentVenue.ll, currentVenue.isHotel, currentVenue.id);
   });
@@ -98,8 +98,8 @@ var buildViz = function (vis, layers) {
     var $t = $(e.target)
 
     if ($t.hasClass('js-nearbyVenue') || $t.parent('.js-nearbyVenue').length) {
-      var nearbyVenueName = $t.data('venuename') || $t.parent('.js-nearbyVenue').data('venuename');
-      selectVenue(nearbyVenueName);
+      var venueDOM = ($t.data('venuename')) ? $t : $t.parent('.js-nearbyVenue');
+      selectVenue(venueDOM.data('venuename'), currentVenue.ll, false, venueDOM.data('venueid'));
     }
   })
 
@@ -108,6 +108,7 @@ var buildViz = function (vis, layers) {
 }
 
 var onFeatureClick = function(e, latlng, pos, data, sublayerIndex) {
+  // console.log(data)
   selectVenue(data.name, latlng, sublayerIndex === 1, data.cartodb_id);
 }
 
@@ -121,6 +122,10 @@ var selectVenue = function(name, ll, isHotel, id, dontLoadEvents) {
   if (ll) currentVenue.ll = ll;
 
   if (isHotel) currentVenue.name = 'hotel:' + currentVenue.name;
+
+  $('.js-rightPane').scrollTop(0);
+  $('.js-nearbyVenuesContainer').html('');
+  $('.js-venueContainer').html('');
 
   loadIso(currentVenue.name, currentMode);
   if (!dontLoadEvents) loadVenueEvents(currentVenue.name, currentDay, isHotel, currentVenue.id);
@@ -139,6 +144,7 @@ var loadIso = function (venueName, mode) {
     venueName: venueName.replace('\'','\'\''),
     type: mode
   });
+  // console.log(venueName)
   isoSublayer.setSQL(sql);
 }
 
@@ -151,37 +157,9 @@ var loadDayVenues = function (day) {
   venuesSublayer.setSQL(sql);
 }
 
-var dummyNearbyVenueTimes = [
-  {
-    label: 'Less than 2 minutes',
-    color: gradient.get(100).hex,
-    nearbyVenues: [{
-      name: 'Javelina',
-      events: 'Chris and the Tunas, The Doury Brothers (...)'
-    }]
-  },
-  {
-    label: '2 to 5 minutes',
-    color: gradient.get(70).hex,
-    nearbyVenues: [{
-      name: 'Tap Room at The Market',
-      events: 'Caroll'
-    },{
-      name: 'Scratch House Backyard ',
-      events: 'The Crookes'
-    }]
-  },
-  {
-    label: '5 to 10 minutes',
-    color: gradient.get(40).hex,
-    nearbyVenues: [{
-      name: 'Bungalow',
-      events: 'Arkells, Gateway Drugs (...)'
-    }]
-  }
-];
 
 var loadVenueEvents = function (venueName, day, isHotel, venueId) {
+  console.log(venueId)
   var allDays = day === 'allDays';
   var sql = venueSQLTpl({
     venueName: venueName.replace('\'','\'\''),
@@ -229,9 +207,10 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
     center_id: venueId,
     day: day,
     allDays: allDays,
-    mode: currentMode
+    mode: currentMode,
+    isHotel: isHotel
   });
-  console.log(nearbySQL)
+  // console.log(nearbySQL)
   sqlClient.execute(nearbySQL)
     .done(function(data) {
       console.log(data);
@@ -239,9 +218,9 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
 
       function getRangeLabel(range) {
         if (range === 120) {
-          return 'less than 2 minutes';
+          return 'Less than 2 minutes';
         } else if (!range) {
-          return 'more than 30 minutes';
+          return 'More than 30 minutes';
         }
         var prevIso = isos[isos.indexOf(range) + 1];
         return prevIso/60 + ' to ' + range/60 + ' minutes'
@@ -266,6 +245,7 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
 
         nearbyVenueTime.nearbyVenues.push({
           name: nearbyVenue.name,
+          id: nearbyVenue.cartodb_id,
           events: eventsSummary
         })
       })
@@ -284,10 +264,18 @@ var loadVenueEvents = function (venueName, day, isHotel, venueId) {
 }
 
 var playSong = function(tracks, eventId) {
-  console.log(eventId)
+  // console.log(eventId)
   if (audio) {
       audio.pause();
+
+      if (eventId === currentPlayingId) {
+        currentPlayingId = null;
+        $('.js-playsong').removeClass('selected');
+        return;
+      }
   }
+  currentPlayingId = eventId;
+
   var urls = [tracks.track0_previewurl];
   if (tracks.track1_previewurl) urls.push(tracks.track1_previewurl);
   if (tracks.track2_previewurl) urls.push(tracks.track2_previewurl);

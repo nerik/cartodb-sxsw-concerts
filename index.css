@@ -4,29 +4,37 @@ html, body, #map {
   padding: 0;
   margin: 0;
   font-family: 'Raleway', sans-serif;
+  font-size: 14px;
 
 }
 button:focus {outline:0;}
 
 button {
   font-family: 'Raleway', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
 
 }
 
 #map {
-  width: calc(100% - 400px);
+  width: calc(100% - 360px);
+}
+
+.main {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 90px);
+  top: 90px;
 }
 
 .rightPane {
   position: absolute;
   top: 0;
   right: 0;
-  width: 400px;
+  width: 360px;
   height: 100%;
-  overflow-y: scroll;
-  background: #282828;
+  overflow-y: auto;
+  background: #181818;
   color: #fff;
 }
 
@@ -34,7 +42,25 @@ button {
   color: #1ed760;
 }
 
-.navBar.cartodb-legend-stack {
+.topBar {
+  height: 50px;
+  padding: 20px;
+  background: #282828;
+  color: #fff;
+}
+
+.topBar-section {
+  display: inline-block;
+  margin: 0 60px 0 0;
+  vertical-align: top;
+}
+
+.topBar-spotify {
+  height: 50px;
+  /*margin-right: 30px*/
+}
+/*
+.topBar.cartodb-legend-stack {
   background: #A4A9AD;
   z-index: 99;
   left: 70px;
@@ -43,36 +69,36 @@ button {
   right: auto;
   padding: 20px;
   color: #fff;
+  display: none;
 }
+*/
 
-.navBar-section {
-  margin: 0 0 18px 0;
-}
-
-.navBar h1 {
-  color: #1ed760;
+.topBar h1, .topBar-step {
+  /*color: #1ed760;*/
   font-style: italic;
+  font-size: 18px;
   text-transform: uppercase;
-  margin :0;
-  margin-bottom: 14px;
-  text-shadow:
+  line-height: 16px;
+  /*margin-bottom: 14px;*/
+  /*text-shadow:
    -2px -2px 0 #323F48,
     2px -2px 0 #323F48,
     -2px 2px 0 #323F48,
-     2px 2px 0 #323F48;
+     2px 2px 0 #323F48;*/
 }
 
-.navBar h1 .navBar-sxsw {
+.topBar h1 .topBar-sxsw {
   color: #fff;
 }
 
 .days button {
   border: 0;
-  border-right: 1px solid #000;
-  padding: 8px;
+  border-right: 1px solid #1ed760;
+  padding: 2px 5px;
   font-weight: bold;
   margin: 0;
-  background: #fff;
+  background: none;
+  color: #1ed760;
 }
 
 .days button:last-child {
@@ -80,7 +106,8 @@ button {
 }
 
 .days button.selected {
-  background: #FFD100;
+  background: #1ed760;
+  color: #282828;
 }
 
 .venues-legend {
@@ -104,6 +131,8 @@ button {
 
 .venueContainer h1 {
   margin-top: 0;
+  font-size: 24px;
+  line-height: 24px;
 }
 
 .venue-intro {
@@ -115,22 +144,26 @@ button {
   clear: both;
 }
 
+.venueContainer h2, .nearbyVenueTime-title {
+  font-size: 18px;
+}
+
 .event-section-title {
   font-weight: bold;
 }
 
 .event-section {
-  margin-bottom: 5px;;
+  margin-bottom: 4px;
 }
 
 .event-cover {
-  width: 100px;
-  height: 100px;
+  width: 60px;
+  height: 60px;
   cursor: pointer;
   float: left;
   display: inline-block;
   margin-right: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 15px;
   vertical-align: middle;
   position: relative;
   background-size: cover;
@@ -142,9 +175,16 @@ button {
   color: #1ed760;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, .4);
   position: absolute;
-  top: 20px;
-  left: 28px;
+  top: 12px;
+  left: 18px;
+  font-size: 30px;
+}
+
+.event-cover.event-cover--hasPreview.selected:hover::after{
+  content: "■";
   font-size: 50px;
+  top: -2px;
+  left: 16px;
 }
 
 .event-spotify {
@@ -153,17 +193,28 @@ button {
 }
 
 .event-spotify img {
-  width: 16px;
+  width: 18px;
+  margin-right: 4px;
+}
+
+.event-spotify img, .event-spotify span {
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .venueContainer h2 {
-  margin-top: 70px;
+  margin-top: 50px;
 }
 
 .nearbyVenueTime {
   margin-top: 10px;
   font-weight: bold;
 }
+
+.nearbyVenueTime-title {
+  margin-bottom: 6px
+}
+
 
 .nearbyVenue {
   border: 0;
@@ -178,6 +229,8 @@ button {
 }
 
 .nearbyVenue-events {
-  font-size: 12px;
+}
 
+.nearbyVenuesTimesEvents li {
+  margin-bottom: 6px
 }

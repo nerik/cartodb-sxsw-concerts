@@ -6,7 +6,7 @@ var secrets = require('./node-secret');
 var path = require('path');
 
 var importer = new CartoDB.Import(secrets);
-var file = path.join(__dirname, 'node-spotify-getArtists.json')
+var file = path.join(__dirname, 'node-spotify-getArtists3.json')
 
 importer
   .file(file, {
