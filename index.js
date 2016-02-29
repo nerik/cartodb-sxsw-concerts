@@ -1,4 +1,4 @@
-var isoSQLTpl = cartodb._.template('SELECT * FROM nerikcarto.sxsw_iso WHERE name = \'<%= venueName %>\' AND type=\'<%= type %>\' ORDER BY data_range DESC');
+var isoSQLTpl = cartodb._.template('SELECT *, CASE WHEN sxsw_iso.type = \'car\' THEN \'driving\' ELSE \'walking\' END AS mode_lbl FROM nerikcarto.sxsw_iso WHERE name = \'<%= venueName %>\' AND type=\'<%= type %>\' ORDER BY data_range DESC');
 var venueSQLTpl = cartodb._.template($('#venueSQLTpl').html());
 var dayVenuesSQLTpl = cartodb._.template($('#dayVenuesSQLTpl').html());
 var nearbyVenuesSQLTpl = cartodb._.template($('#nearbyVenuesSQLTpl').html());

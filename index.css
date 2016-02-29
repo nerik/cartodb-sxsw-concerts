@@ -16,6 +16,7 @@ button {
 
 }
 
+
 #map {
   width: calc(100% - 360px);
 }
@@ -159,7 +160,6 @@ button {
 .event-cover {
   width: 60px;
   height: 60px;
-  cursor: pointer;
   float: left;
   display: inline-block;
   margin-right: 10px;
@@ -168,6 +168,11 @@ button {
   position: relative;
   background-size: cover;
   border: 1px solid rgba(256,256,256,.4);
+  background-image:url('notfound.png')
+}
+
+.event-cover.event-cover--hasPreview {
+  cursor: pointer;
 }
 
 .event-cover.event-cover--hasPreview:hover::after, .event-cover.event-cover--hasPreview.selected::after {

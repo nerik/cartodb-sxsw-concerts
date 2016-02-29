@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="./favicon.png">
   <link href='https://fonts.googleapis.com/css?family=Raleway:400,700,900italic' rel='stylesheet' type='text/css'>
 
-  <script src="//localhost:9091"></script>
+  <script src="//localhost:9093"></script>
 </head>
 
 
@@ -42,7 +42,7 @@
     </div>
     <div class="topBar-section">
       <div class="topBar-step">3.</div>
-      click on the <span class='green venues-legend'></span>venues<br> on the map
+      click on the <span class='green venues-legend'></span>venues<br> or hotels on the map
     </div>
     <div class="topBar-section">
       <div class="topBar-step">4.</div>
@@ -106,7 +106,8 @@
         <ul class="events">
         <% events.forEach(function(ev) { %>
           <li class="event js-event" data-eventid="<%= ev.cartodb_id %>">
-            <div class="event-cover js-playsong<%if (ev.track0_previewurl) {%> event-cover--hasPreview<%}%>" data-track0_previewurl="<%= ev.track0_previewurl %>" data-track1_previewurl="<%= ev.track1_previewurl %>" data-track2_previewurl="<%= ev.track2_previewurl %>" style="background-image:url(<%= ev.imageurl %>)">
+            <div class="event-cover js-playsong<%if (ev.track0_previewurl) {%> event-cover--hasPreview<%}%>" data-track0_previewurl="<%= ev.track0_previewurl %>" data-track1_previewurl="<%= ev.track1_previewurl %>" data-track2_previewurl="<%= ev.track2_previewurl %>"
+              <% if (ev.imageurl) { %>style="background-image:url(<%= ev.imageurl %>)"<% } %>>
 
             </div>
             <div class="event-section event-section-title">
@@ -172,25 +173,29 @@
 
 #sxsw_iso{
   polygon-fill: #FFFFCC;
-  polygon-opacity: .03;
+  polygon-opacity: .07;
   line-color: #FFF;
   line-width: 1.5;
   line-opacity: 1;
-  text-name: [data_range]/60 + 'm. ' + [type];
+}
+#sxsw_iso::lbl{
+  text-name: [data_range]/60 + 'm. ' + [mode_lbl];
   text-face-name: 'DejaVu Sans Bold';
   text-size: 13;
   text-label-position-tolerance: 10;
-  text-halo-fill: #000;
-  text-halo-radius: 2;
+  text-halo-fill: #170F10;
+  text-halo-radius: 3;
   text-allow-overlap: false;
   text-placement: line;
   text-placement-type: simple;
-  text-dy: -10;
 }
+
 <% for (var j=0; j<6; j++) { %>
   #sxsw_iso [ data_range <= <%= isos[j] %>] {
     polygon-fill: @col<%= j %>;
     line-color: @col<%= j %>;
+  }
+  #sxsw_iso::lbl [ data_range <= <%= isos[j] %>] {
     text-fill: @col<%= j %>;
   }
 <% } %>
