@@ -68,7 +68,7 @@ var buildViz = function (vis, layers) {
   // hotelsSublayer.setInteractivity('cartodb_id, name')
   venuesSublayer.on('featureClick', onFeatureClick);
   hotelsSublayer.on('featureClick', onFeatureClick);
-
+  console.log(isoCss)
   isoSublayer.setCartoCSS(isoCss);
 
   $('.js-controls input').on('click', function(e) {

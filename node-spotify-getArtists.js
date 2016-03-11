@@ -12,15 +12,15 @@ var sql = new CartoDB.SQL(secrets);
 var eventsRows = [];
 var artists = [];
 
-// sql.execute('SELECT DISTINCT ON(name) * FROM sxsw_events2 WHERE music is true')
-//   .done(function(data) {
-//     eventsRows = data.rows;
-//     // console.log(_.pluck(eventsRows, 'name'))
-//     fetchSpotifyData(0);
-//   })
-//   .error(function(e) {
-//     console.log(e)
-//   });
+sql.execute('SELECT DISTINCT ON(name) * FROM sxsw_events2 WHERE music is true')
+  .done(function(data) {
+    eventsRows = data.rows;
+    // console.log(_.pluck(eventsRows, 'name'))
+    fetchSpotifyData(0);
+  })
+  .error(function(e) {
+    console.log(e)
+  });
 
 
 
