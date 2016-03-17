@@ -79,6 +79,11 @@ button {
     padding-right: 0;
   }
 
+  .main {
+    top: 150px;
+    height: calc(100% - 150px);
+  }
+
   .topBar-spotify {
     float: left;
     /*margin-right: 20px;*/
@@ -92,10 +97,6 @@ button {
 
   .topBar-section:not(.topBar-spotify):nth-child(2n+1) {
     width: 30%;
-  }
-
-  .main {
-    top: 150px;
   }
 
   .fullscreen {
