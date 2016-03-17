@@ -60,6 +60,55 @@ button {
   height: 50px;
   margin-right: 50px
 }
+
+.fullscreen {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  #map {
+    width: calc(100% - 240px);
+  }
+
+  .rightPane {
+    width: 240px;
+  }
+
+  .topBar {
+    height: 150px;
+    padding-right: 0;
+  }
+
+  .topBar-spotify {
+    float: left;
+    /*margin-right: 20px;*/
+    margin-bottom: 100px;
+  }
+
+  .topBar-section:not(.topBar-spotify) {
+    width: 43%;
+    margin: 0 0 12px 0;
+  }
+
+  .topBar-section:not(.topBar-spotify):nth-child(2n+1) {
+    width: 30%;
+  }
+
+  .main {
+    top: 150px;
+  }
+
+  .fullscreen {
+    display: block;
+    color: #1ed760;
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    text-transform: none;
+    font-style:normal;
+    padding-top: 10px;
+    text-decoration: none;
+  }
+}
 /*
 .topBar.cartodb-legend-stack {
   background: #A4A9AD;
